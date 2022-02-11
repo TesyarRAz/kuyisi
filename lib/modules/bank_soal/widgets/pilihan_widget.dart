@@ -13,6 +13,7 @@ class PilihanWidget extends StatelessWidget {
         decoration: const InputDecoration(
           border: OutlineInputBorder(),
         ),
+        keyboardType: TextInputType.multiline,
         controller: _pilihan,
       ),
     );

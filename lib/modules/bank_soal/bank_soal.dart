@@ -1,7 +1,5 @@
 library bank_soal;
 
-import 'dart:math';
-
 import 'package:flutter/material.dart' hide ErrorWidget;
 import 'package:get/get.dart';
 import 'package:kuyisi/core/entity/entity.dart';
@@ -13,3 +11,4 @@ part 'screens/home_screen.dart';
 part 'screens/create_screen.dart';
 part 'widgets/soal_widget.dart';
 part 'widgets/pilihan_widget.dart';
+part 'widgets/button_widget.dart';

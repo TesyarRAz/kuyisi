@@ -1,8 +1,6 @@
 part of bank_soal;
 
 class CreateScreen extends StatelessWidget {
-  final _soals = <Soal>[].obs;
-
   CreateScreen({Key? key}) : super(key: key);
 
   @override
@@ -21,41 +19,17 @@ class CreateScreen extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              TextField(
-                decoration: const InputDecoration(
+              const TextField(
+                decoration: InputDecoration(
                   labelText: "Nama Tes",
                   border: OutlineInputBorder(),
                 ),
-                minLines: max(MediaQuery.of(context).size.width ~/ 200, 1),
-                maxLines: 5,
+                keyboardType: TextInputType.multiline,
               ),
               const SizedBox(
                 height: 20,
               ),
-              Column(
-                children: [
-                  Obx(
-                    () => ListView(
-                      shrinkWrap: true,
-                      children: _soals
-                          .map((e) => Padding(
-                                key: ObjectKey(e),
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 8.0),
-                                child: SoalWidget(
-                                  soal: e,
-                                ),
-                              ))
-                          .toList(),
-                    ),
-                  ),
-                  _AddButtonWidget(
-                    onPressed: () {
-                      _soals.add(Soal());
-                    },
-                  ),
-                ],
-              )
+              _ListSoalWidget()
             ],
           ),
         ),
@@ -64,23 +38,38 @@ class CreateScreen extends StatelessWidget {
   }
 }
 
-class _AddButtonWidget extends StatelessWidget {
-  final Function()? onPressed;
-
-  const _AddButtonWidget({Key? key, this.onPressed}) : super(key: key);
+class _ListSoalWidget extends StatefulWidget {
+  final soals = <Soal>[];
 
   @override
+  State<StatefulWidget> createState() => _ListSoalWidgetState();
+}
+
+class _ListSoalWidgetState extends State<_ListSoalWidget> {
+  @override
   Widget build(BuildContext context) {
-    return Card(
-      child: InkWell(
-        onTap: onPressed,
-        child: const Padding(
-          padding: EdgeInsets.all(8.0),
-          child: Center(
-            child: Icon(Icons.add),
-          ),
+    return ListView(
+      shrinkWrap: true,
+      children: [
+        ...widget.soals.map((e) {
+          return Padding(
+            key: ValueKey(e.soal),
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: SoalWidget(
+              soal: e,
+            ),
+          );
+        }).toList(),
+        AddButtonWidget(
+          onPressed: () {
+            setState(() {
+              widget.soals.add(Soal(
+                pilihans: [],
+              ));
+            });
+          },
         ),
-      ),
+      ],
     );
   }
 }
