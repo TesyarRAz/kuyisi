@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:kuyisi/core/screens/screens.dart';
-import 'package:kuyisi/core/security/secret_loader.dart';
-import 'package:kuyisi/core/services/auth_service.dart';
-import 'package:kuyisi/core/services/bank_soal_service.dart';
+import 'package:kuyisi/common/security/secret.dart';
+import 'package:kuyisi/kuyisi/infrastucture/data_sources/question_bank_local_data_provider.dart';
+import 'package:kuyisi/kuyisi/infrastucture/data_sources/question_bank_remote_data_provider.dart';
+import 'package:kuyisi/kuyisi/infrastucture/repositories/question_bank_repository.dart';
+import 'package:kuyisi/kuyisi/presentation/splash_screen.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:supabase/supabase.dart';
 
@@ -17,13 +18,22 @@ void main() async {
 }
 
 Future<void> initServices() async {
-  var secret = await SecretLoader(secretPath: "secrets.json").load();
+  var secret = await Secret.load("secrets.json");
 
   var database = SupabaseClient(secret.supabaseUrl, secret.supabaseKey);
 
   await Get.putAsync(() => PackageInfo.fromPlatform());
-  await Get.putAsync(() async => AuthService(database: database));
-  await Get.putAsync(() async => BankSoalService(database: database));
+
+  Get.lazyPut(() => QuestionBankLocalDataProvider());
+  Get.lazyPut(() => QuestionBankRemoteDataProvider(database));
+
+  Get.lazyPut(
+    () => QuestionBankRepository(
+      connectivity: Get.find(),
+      questionBankRemoteDataProvider: Get.find(),
+      questionBankLocalDateProvider: Get.find(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
